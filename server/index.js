@@ -6,7 +6,7 @@ const app= express()
 app.use(express.json())
 app.use(cors())
 
-mongoose.connect("mongodb://localhost:27017/employee");
+mongoose.connect("mongodb+srv://gj809:gj809@employee.qqnli.mongodb.net/");
 
 app.post('/register',(req,res)=>{
 EmployeeModel.create(req.body)
@@ -33,26 +33,7 @@ app.post('/login', (req, res) => {
     })
     .catch(err => res.json(err));
 });
-
-// app.post('/login', (req, res) => {
-//   console.log('Login request received');
-//   const { email, password } = req.body;
-//   EmployeeModel.findOne({ email: email })
-//     .then(user => {
-//       if (user) {
-//         if (user.password === password) {
-//           res.json("Success");
-//         } else {
-//           res.json("Password is Incorrect");
-//         }
-//       } else {
-//         res.json("No record existed");
-//       }
-//     })
-//     .catch(err => res.json(err));
-// });
-
-app.listen(5000, () => {
+app.listen(5001, () => {
     console.log("server is running on port 5000");
   });
   

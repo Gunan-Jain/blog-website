@@ -20,11 +20,11 @@ const Login = () => {
     e.preventDefault();
     console.log("Login Data:", formData);
     axios
-      .post("http://localhost:5000/login", formData)
+      .post("http://localhost:5001/login", formData)
       .then((result) => {
         console.log(result);
         if (result.data == "Success") {
-          navigate("/");
+          navigate("/Dashboard");
         }
       })
       .catch((err) => console.log(err));

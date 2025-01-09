@@ -1,0 +1,27 @@
+.video-manager {
+	background: #2a2a40;
+	padding: 20px;
+	border-radius: 8px;
+  }
+  
+  .video-form input {
+	width: 100%;
+	margin-bottom: 10px;
+	padding: 10px;
+	border: none;
+	border-radius: 4px;
+	background: #1e1e2f;
+	color: #fff;
+  }
+  
+  .video-form button {
+	padding: 10px 20px;
+	border: none;
+
+	background: #ffb703;
+	color: #1e1e2f;
+	border-color: #2a2a40;
+	font-weight: bold;
+	cursor: pointer;
+  }
+  

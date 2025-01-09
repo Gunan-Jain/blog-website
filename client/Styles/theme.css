@@ -1,0 +1,49 @@
+/* General Body Styling */
+body {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Light Theme */
+  body.light-theme {
+	background-color: #ffffff;
+	color: #000000;
+  }
+  
+  /* Dark Theme */
+  body.dark-theme {
+	background-color: #121212;
+	color: #ffffff;
+  }
+  
+  /* Toggle Button Styling */
+  .theme-toggle {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 1000;
+	cursor: pointer;
+  }
+  
+  .toggle-capsule {
+	width: 70px;
+	height: 35px;
+	border-radius: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #ccc;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .toggle-capsule.dark {
+	background-color: #444;
+  }
+  
+  .icon {
+	font-size: 20px;
+	color: #ffffff;
+  }
+  

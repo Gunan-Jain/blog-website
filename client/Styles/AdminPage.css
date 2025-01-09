@@ -1,0 +1,33 @@
+.admin-panel {
+	display: flex;
+	flex-direction: column;
+	background-color: #1e1e2f;
+	color: #fff;
+	min-height: 100vh;
+	padding: 20px;
+  }
+  
+  .admin-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+  }
+  
+  .admin-content {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+  }
+  
+  .stats {
+	display: flex;
+	gap: 20px;
+  }
+  
+  .management {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+  }
+  
