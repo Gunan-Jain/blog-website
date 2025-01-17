@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "./Login.css";
-import video from "./assets/Login-video.mp4";
+import video from "./assets/Ai.mp4";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ const Login = () => {
       .post("http://localhost:5001/login", formData)
       .then((result) => {
         console.log(result);
-        if (result.data == "Success") {
+        if (result.data === "Success") {
           navigate("/Dashboard");
         }
       })
@@ -41,6 +42,9 @@ const Login = () => {
           loop
           muted
         />
+        <div className="video-tagline">
+          <p>Your Eyes When You’re Away</p>
+        </div>
       </div>
 
       <div className="login-form-section">

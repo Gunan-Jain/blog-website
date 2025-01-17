@@ -1,46 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Home.css";
 import EnLogo from "./assets/EnLogo.jpg";
 import Video from "./assets/video.mp4";
 import { Link } from "react-router-dom";
+import { FaPlusCircle } from "react-icons/fa"; // Icon for the add button
 
 const Home = () => {
-  const [blogs, setBlogs] = useState([
-    {
-      title: "Security Solutions for Modern Homes",
-      content:
-        "Discover how the latest advancements in security technology can transform the safety of your home. Learn about surveillance systems, smart cameras, and more...",
-      comments: [],
-      showCommentBox: false,
-      commentText: "",
-      commentImage: null,
-    },
-    {
-      title: "How to Choose the Right Security Camera",
-      content:
-        "With so many options available, it can be overwhelming to choose the right security camera for your needs. This guide breaks down key features to look for...",
-      comments: [],
-      showCommentBox: false,
-      commentText: "",
-      commentImage: null,
-    },
-    {
-      title: "Why Surveillance is Essential for Businesses",
-      content:
-        "Protecting your business from theft and vandalism is essential. In this post, we discuss the importance of security cameras in ensuring business safety...",
-      comments: [],
-      showCommentBox: false,
-      commentText: "",
-      commentImage: null,
-    },
-  ]);
+   const [blogs, setBlogs] = useState(() => {
+    const savedBlogs = localStorage.getItem("blogs");
+    return savedBlogs ? JSON.parse(savedBlogs) : [];
+    
+  });
 
   const [newBlog, setNewBlog] = useState({
     title: "",
     content: "",
-    image: null,
-    file: null,
   });
+
+  const [showForm, setShowForm] = useState(false); // Toggles the form
+
+  useEffect(() => {
+    // Save blogs to localStorage whenever the blogs state changes
+    localStorage.setItem("blogs", JSON.stringify(blogs));
+  }, [blogs]);
 
   const handleBlogChange = (e) => {
     const { name, value } = e.target;
@@ -50,54 +32,12 @@ const Home = () => {
     }));
   };
 
-  const handleImageUpload = (e) => {
-    setNewBlog({ ...newBlog, image: e.target.files[0] });
-  };
-
   const handleAddBlog = () => {
-    setBlogs([
-      ...blogs,
-      { title: newBlog.title, content: newBlog.content, comments: [] },
-    ]);
-    setNewBlog({
-      title: "",
-      content: "",
-      image: null,
-      file: null,
-    });
-  };
-
-  const toggleCommentBox = (index) => {
-    const updatedBlogs = [...blogs];
-    updatedBlogs[index].showCommentBox = !updatedBlogs[index].showCommentBox;
-    setBlogs(updatedBlogs);
-  };
-
-  const handleCommentTextChange = (e, index) => {
-    const updatedBlogs = [...blogs];
-    updatedBlogs[index].commentText = e.target.value;
-    setBlogs(updatedBlogs);
-  };
-
-  const handleAddComment = (index) => {
-    const updatedBlogs = [...blogs];
-    const newComment = {
-      text: blogs[index].commentText,
-      replies: [],
-    };
-    updatedBlogs[index].comments.push(newComment);
-    updatedBlogs[index].commentText = "";
-    updatedBlogs[index].showCommentBox = false;
-    setBlogs(updatedBlogs);
-  };
-
-  const handleAddReply = (blogIndex, commentIndex, replyText) => {
-    const updatedBlogs = [...blogs];
-    const newReply = {
-      text: replyText,
-    };
-    updatedBlogs[blogIndex].comments[commentIndex].replies.push(newReply);
-    setBlogs(updatedBlogs);
+    if (newBlog.title.trim() && newBlog.content.trim()) {
+      setBlogs([...blogs, { title: newBlog.title, content: newBlog.content }]);
+      setNewBlog({ title: "", content: "" });
+      setShowForm(false);
+    }
   };
 
   return (
@@ -114,16 +54,12 @@ const Home = () => {
         <a href="https://www.instagram.com/endroid.usa/" target="_blank">
           Instagram
         </a>
-        <a
-          href="https://www.linkedin.com/company/endroid-usa-630b76217/"
-          target="_blank"
-        >
+        <a href="https://www.linkedin.com/company/endroid-usa-630b76217/" target="_blank">
           LinkedIn
         </a>
         <a href="https://www.youtube.com/@vipinpahwa4815" target="_blank">
           YouTube
         </a>
-
         <Link to="/login" className="home">
           <button className="home-button">Login</button>
         </Link>
@@ -134,9 +70,7 @@ const Home = () => {
           <img src={EnLogo} alt="Endroid USA Logo" />
         </div>
         <nav>
-          <a href="https://endroidusa.com/index.php" target="_blank">
-            Home
-          </a>
+          <a href="https://endroidusa.com/index.php" target="_blank">Home</a>
           <a href="#about">About Us</a>
           <a href="#features">Products</a>
           <a href="#marketing">Marketing</a>
@@ -171,69 +105,47 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Blog Section */}
         <section className="blog" id="blog">
           <h3>Latest Blog Posts</h3>
           <div className="blog-posts">
             {blogs.map((blog, index) => (
               <div className="blog-post" key={index}>
                 <h4>{blog.title}</h4>
-                <div
-                  className="blog-content"
-                  style={{ maxHeight: "300px", overflowY: "scroll" }}
-                >
+                <div className="blog-content" style={{ maxHeight: "300px", overflowY: "scroll" }}>
                   <p>{blog.content}</p>
                 </div>
-                {/* <button
-                  onClick={() => toggleCommentBox(index)}
-                  className="comment-button"
-                >
-                  💬
-                </button>
-
-                {blog.showCommentBox && (
-                  <div className="comment-box">
-                    <textarea
-                      value={blog.commentText}
-                      onChange={(e) => handleCommentTextChange(e, index)}
-                      placeholder="Add a comment"
-                    />
-                    <button onClick={() => handleAddComment(index)}>
-                      Add Comment
-                    </button>
-                  </div>
-                )} */}
-                {/* Render Comments */}
-                {/* {blog.comments.length > 0 && (
-                  <div className="comments">
-                    {blog.comments.map((comment, commentIndex) => (
-                      <div key={commentIndex} className="comment">
-                        <p>{comment.text}</p> */}
-                {/* Render Replies */}
-                {/* {comment.replies.length > 0 && (
-                          <div className="replies">
-                            {comment.replies.map((reply, replyIndex) => (
-                              <div key={replyIndex} className="reply">
-                                <p>{reply.text}</p>
-                              </div>
-                            ))}
-                          </div>
-                        )} */}
-                {/* Reply Button */}
-                {/* <textarea
-                          placeholder="Reply to this comment"
-                          onChange={(e) => {
-                            const replyText = e.target.value;
-                            handleAddReply(index, commentIndex, replyText);
-                          }}
-              //           /> */}
-                {/* //{" "} */}
               </div>
-              //       ))}
-              //     </div>
-              //   )}
-              // </div>
             ))}
+
+            {/* Add Blog Icon */}
+            <div className="blog-post add-blog" onClick={() => setShowForm(true)}>
+              <FaPlusCircle size={50} color="#007BFF" />
+              <p>Add New Blog</p>
+            </div>
+
+            {/* Blog Form */}
+            {showForm && (
+              <div className="blog-post">
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Enter Blog Title"
+                  value={newBlog.title}
+                  onChange={handleBlogChange}
+                  className="blog-input"
+                />
+                <textarea
+                  name="content"
+                  placeholder="Enter Blog Content"
+                  value={newBlog.content}
+                  onChange={handleBlogChange}
+                  className="blog-textarea"
+                />
+                <button onClick={handleAddBlog} className="submit-button">
+                  Post Blog
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -249,15 +161,6 @@ const Home = () => {
               <p>
                 <strong>Phone:</strong> +1 913-653-3301
               </p>
-            </div>
-            <div>
-              <p>
-                <strong>Follow us:</strong>
-              </p>
-              <div className="social-media">
-                <a href="https://www.facebook.com/DBSENDROID">Facebook</a>ss
-                <a href="https://www.instagram.com/endroid.usa">Instagram</a>
-              </div>
             </div>
           </div>
         </section>
@@ -280,4 +183,5 @@ const Home = () => {
     </>
   );
 };
+
 export default Home;

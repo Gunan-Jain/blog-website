@@ -16,9 +16,6 @@ function App() {
     <div className="admin-panel">
       <header className="admin-header">
         <h1>Admin Dashboard</h1>
-        <button type="button" onClick={handleNavigate}>
-          History Blogs
-        </button>
         <ThemeToggle />
       </header>
       <main className="admin-content">
