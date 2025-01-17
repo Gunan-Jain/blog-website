@@ -184,8 +184,7 @@ const Home = () => {
                 >
                   <p>{blog.content}</p>
                 </div>
-
-                <button
+                {/* <button
                   onClick={() => toggleCommentBox(index)}
                   className="comment-button"
                 >
@@ -203,17 +202,15 @@ const Home = () => {
                       Add Comment
                     </button>
                   </div>
-                )}
-
+                )} */}
                 {/* Render Comments */}
-                {blog.comments.length > 0 && (
+                {/* {blog.comments.length > 0 && (
                   <div className="comments">
                     {blog.comments.map((comment, commentIndex) => (
                       <div key={commentIndex} className="comment">
-                        <p>{comment.text}</p>
-
-                        {/* Render Replies */}
-                        {comment.replies.length > 0 && (
+                        <p>{comment.text}</p> */}
+                {/* Render Replies */}
+                {/* {comment.replies.length > 0 && (
                           <div className="replies">
                             {comment.replies.map((reply, replyIndex) => (
                               <div key={replyIndex} className="reply">
@@ -221,21 +218,21 @@ const Home = () => {
                               </div>
                             ))}
                           </div>
-                        )}
-
-                        {/* Reply Button */}
-                        <textarea
+                        )} */}
+                {/* Reply Button */}
+                {/* <textarea
                           placeholder="Reply to this comment"
                           onChange={(e) => {
                             const replyText = e.target.value;
                             handleAddReply(index, commentIndex, replyText);
                           }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
+              //           /> */}
+                {/* //{" "} */}
               </div>
+              //       ))}
+              //     </div>
+              //   )}
+              // </div>
             ))}
           </div>
         </section>
@@ -258,7 +255,7 @@ const Home = () => {
                 <strong>Follow us:</strong>
               </p>
               <div className="social-media">
-                <a href="https://www.facebook.com/DBSENDROID">Facebook</a>
+                <a href="https://www.facebook.com/DBSENDROID">Facebook</a>ss
                 <a href="https://www.instagram.com/endroid.usa">Instagram</a>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Signup.css";
-import Image from "./assets/Endroid.jpg";
+import video from "./assets/Login-video.mp4";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -30,11 +30,18 @@ const Signup = () => {
 
   return (
     <div className="signup-container">
-      <div className="container">
-        <div className="signup-image">
-          <img src={Image} alt="not shown" />
-        </div>
-        <form className="signup-form" onSubmit={handleSubmit}>
+      <div className="signup-image">
+        <video
+          src={video}
+          className="login-video"
+          style={{ width: "100%", height: "100%" }}
+          autoPlay
+          loop
+          muted
+        />
+      </div>
+      <div className="signup-form">
+        <form className="signup-form-content" onSubmit={handleSubmit}>
           <h2 className="signup-title">Sign Up</h2>
 
           <label htmlFor="name" className="signup-label">

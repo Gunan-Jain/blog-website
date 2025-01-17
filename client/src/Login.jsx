@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
-import Image from "./assets/Endroid.jpg";
+import video from "./assets/Login-video.mp4";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -31,11 +31,19 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="container">
-        <div className="login-image">
-          <img src={Image} alt="Not Shown" />
-        </div>
+    <div className="login-container" style={{ backgroundColor: "#f0f4f8" }}>
+      <div className="login-image-section">
+        <video
+          src={video}
+          className="login-video"
+          style={{ width: "100%", height: "100%" }}
+          autoPlay
+          loop
+          muted
+        />
+      </div>
+
+      <div className="login-form-section">
         <form className="login-form" onSubmit={handleSubmit}>
           <h2 className="login-title">Login</h2>
 
