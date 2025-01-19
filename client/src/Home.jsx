@@ -4,25 +4,34 @@ import EnLogo from "./assets/EnLogo.jpg";
 import Video from "./assets/video.mp4";
 import { Link } from "react-router-dom";
 import { FaPlusCircle } from "react-icons/fa"; // Icon for the add button
+import axios from "axios"; // For making API requests
 
 const Home = () => {
-   const [blogs, setBlogs] = useState(() => {
-    const savedBlogs = localStorage.getItem("blogs");
-    return savedBlogs ? JSON.parse(savedBlogs) : [];
-    
-  });
-
+  const [blogs, setBlogs] = useState([]); // Blogs state
   const [newBlog, setNewBlog] = useState({
     title: "",
     content: "",
   });
-
   const [showForm, setShowForm] = useState(false); // Toggles the form
 
+  // Fetch blogs from the backend
+  const fetchBlogs = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/api/paragraphs");
+      const formattedBlogs = response.data.map((item) => {
+        const [title, content] = item.content.split(": ");
+        return { title: title || "Untitled", content: content || "" };
+      });
+      setBlogs(formattedBlogs);
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+    }
+  };
+
+  // Fetch blogs on component mount
   useEffect(() => {
-    // Save blogs to localStorage whenever the blogs state changes
-    localStorage.setItem("blogs", JSON.stringify(blogs));
-  }, [blogs]);
+    fetchBlogs();
+  }, []);
 
   const handleBlogChange = (e) => {
     const { name, value } = e.target;
@@ -32,11 +41,27 @@ const Home = () => {
     }));
   };
 
-  const handleAddBlog = () => {
+  const handleAddBlog = async () => {
     if (newBlog.title.trim() && newBlog.content.trim()) {
-      setBlogs([...blogs, { title: newBlog.title, content: newBlog.content }]);
-      setNewBlog({ title: "", content: "" });
-      setShowForm(false);
+      try {
+        const newBlogContent = `${newBlog.title}: ${newBlog.content}`;
+
+        // Post the new blog to the backend
+        await axios.post("http://localhost:3001/api/paragraph", {
+          content: newBlogContent, // Sending title and content as combined string
+        });
+
+        // Fetch blogs again to reflect the new addition
+        fetchBlogs();
+
+        // Reset the new blog form and close it
+        setNewBlog({ title: "", content: "" });
+        setShowForm(false);
+      } catch (error) {
+        console.error("Error adding blog:", error);
+      }
+    } else {
+      alert("Please fill in both title and content.");
     }
   };
 
@@ -45,19 +70,39 @@ const Home = () => {
       <div className="top-navbar-extra">
         <span>Email: sales@dbsindia.in</span>
         <span>Phone: 9136533301</span>
-        <a href="https://www.facebook.com/dbs.india.9" target="_blank">
+        <a
+          href="https://www.facebook.com/dbs.india.9"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Facebook
         </a>
-        <a href="https://www.facebook.com/dbs.india.9" target="_blank">
+        <a
+          href="https://www.facebook.com/dbs.india.9"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Twitter
         </a>
-        <a href="https://www.instagram.com/endroid.usa/" target="_blank">
+        <a
+          href="https://www.instagram.com/endroid.usa/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Instagram
         </a>
-        <a href="https://www.linkedin.com/company/endroid-usa-630b76217/" target="_blank">
+        <a
+          href="https://www.linkedin.com/company/endroid-usa-630b76217/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           LinkedIn
         </a>
-        <a href="https://www.youtube.com/@vipinpahwa4815" target="_blank">
+        <a
+          href="https://www.youtube.com/@vipinpahwa4815"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           YouTube
         </a>
         <Link to="/login" className="home">
@@ -70,7 +115,13 @@ const Home = () => {
           <img src={EnLogo} alt="Endroid USA Logo" />
         </div>
         <nav>
-          <a href="https://endroidusa.com/index.php" target="_blank">Home</a>
+          <a
+            href="https://endroidusa.com/index.php"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Home
+          </a>
           <a href="#about">About Us</a>
           <a href="#features">Products</a>
           <a href="#marketing">Marketing</a>
@@ -111,14 +162,20 @@ const Home = () => {
             {blogs.map((blog, index) => (
               <div className="blog-post" key={index}>
                 <h4>{blog.title}</h4>
-                <div className="blog-content" style={{ maxHeight: "300px", overflowY: "scroll" }}>
+                <div
+                  className="blog-content"
+                  style={{ maxHeight: "300px", overflowY: "scroll" }}
+                >
                   <p>{blog.content}</p>
                 </div>
               </div>
             ))}
 
             {/* Add Blog Icon */}
-            <div className="blog-post add-blog" onClick={() => setShowForm(true)}>
+            <div
+              className="blog-post add-blog"
+              onClick={() => setShowForm(!showForm)}
+            >
               <FaPlusCircle size={50} color="#007BFF" />
               <p>Add New Blog</p>
             </div>
