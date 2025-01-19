@@ -22,7 +22,7 @@ const Signup = () => {
     e.preventDefault();
 
     axios
-      .post("http://localhost:5001/register", formData)
+      .post("http://localhost:5003/register", formData)
       .then((result) => {
         console.log(result);
         navigate("/login");

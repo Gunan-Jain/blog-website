@@ -42,6 +42,6 @@ app.get('/api/paragraphs', async (req, res) => {
   }
 });
 
-app.listen(3007 , () => {
+app.listen(3008 , () => {
   console.log("Server is running on port 3001");
 });

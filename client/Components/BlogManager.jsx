@@ -1,109 +1,8 @@
-// // BlogManager.js
-// import React, { useState } from "react";
-// import "../Styles/BlogManager.css";
-// import { FaCloudUploadAlt } from "react-icons/fa";
-
-// function BlogManager() {
-//   const [blogTitle, setBlogTitle] = useState("");
-//   const [blogContent, setBlogContent] = useState("");
-//   const [file, setFile] = useState(null);
-//   const [preview, setPreview] = useState(null);
-//   const [progress, setProgress] = useState(0);
-
-//   const handleFileChange = (e) => {
-//     const uploadedFile = e.target.files[0];
-//     processFile(uploadedFile);
-//   };
-
-//   const handleDrop = (e) => {
-//     e.preventDefault();
-//     const uploadedFile = e.dataTransfer.files[0];
-//     processFile(uploadedFile);
-//   };
-
-//   const processFile = (uploadedFile) => {
-//     if (
-//       uploadedFile &&
-//       ["image/jpeg", "image/png", "application/pdf"].includes(uploadedFile.type)
-//     ) {
-//       setFile(uploadedFile);
-//       if (uploadedFile.type.startsWith("image")) {
-//         setPreview(URL.createObjectURL(uploadedFile));
-//       } else {
-//         setPreview(null);
-//       }
-//     } else {
-//       alert("Invalid file type. Please upload JPG, PNG, or PDF files.");
-//     }
-//   };
-
-//   const handleDragOver = (e) => {
-//     e.preventDefault();
-//   };
-
-//   const handleSubmit = () => {
-//     if (file) {
-//       let uploadInterval = setInterval(() => {
-//         setProgress((oldProgress) => {
-//           if (oldProgress === 100) {
-//             clearInterval(uploadInterval);
-//             alert("Blog uploaded successfully!");
-//             return 0;
-//           }
-//           return Math.min(oldProgress + 10, 100);
-//         });
-//       }, 500);
-//     } else {
-//       alert("Please upload a file.");
-//     }
-//   };
-
-//   return (
-//     <div className="blog-manager">
-//       <h2>Manage Blogs</h2>
-//       <div
-//         className="blog-form"
-//         onDrop={handleDrop}
-//         onDragOver={handleDragOver}
-//       >
-//         <input
-//           type="text"
-//           placeholder="Blog Title"
-//           value={blogTitle}
-//           onChange={(e) => setBlogTitle(e.target.value)}
-//         />
-//         <textarea
-//           placeholder="Blog Content"
-//           value={blogContent}
-//           onChange={(e) => setBlogContent(e.target.value)}
-//         ></textarea>
-//         <div className="upload-section">
-//           <label htmlFor="file-upload" className="upload-btn">
-//             <FaCloudUploadAlt size={30} /> Drag & Drop or Upload Blog Image/PDF
-//           </label>
-//           <input
-//             id="file-upload"
-//             type="file"
-//             onChange={handleFileChange}
-//             hidden
-//           />
-//         </div>
-//         {preview && <img src={preview} alt="Preview" className="preview" />}
-//         {progress > 0 && (
-//           <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-//         )}
-//         <button className="btn" onClick={handleSubmit}>
-//           Add Blog
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default BlogManager;
-
 import React, { useState } from "react";
 import "../Styles/BlogManager.css";
+
+// Importing Font Awesome icons
+import { FaUpload, FaBold, FaItalic, FaAlignLeft, FaAlignCenter, FaAlignRight } from "react-icons/fa";
 
 function BlogManager() {
   const [blogTitle, setBlogTitle] = useState("");
@@ -132,21 +31,73 @@ function BlogManager() {
     }
   };
 
+  const handleTextFormat = (formatType) => {
+    const activeElement = document.activeElement;
+    const selectionStart = activeElement.selectionStart;
+    const selectionEnd = activeElement.selectionEnd;
+    const selectedText = activeElement.value.substring(selectionStart, selectionEnd);
+
+    if (selectedText) {
+      let formattedText;
+      switch (formatType) {
+        case "bold":
+          formattedText = `<b>${selectedText}</b>`;
+          break;
+        case "italic":
+          formattedText = `<i>${selectedText}</i>`;
+          break;
+        case "alignLeft":
+          formattedText = `<div style="text-align: left;">${selectedText}</div>`;
+          break;
+        case "alignCenter":
+          formattedText = `<div style="text-align: center;">${selectedText}</div>`;
+          break;
+        case "alignRight":
+          formattedText = `<div style="text-align: right;">${selectedText}</div>`;
+          break;
+        default:
+          return;
+      }
+
+      const newText = activeElement.value.substring(0, selectionStart) + formattedText + activeElement.value.substring(selectionEnd);
+      if (activeElement === document.getElementById("blogTitle")) {
+        setBlogTitle(newText);
+      } else if (activeElement === document.getElementById("blogContent")) {
+        setBlogContent(newText);
+      }
+    }
+  };
+
+  const handleImageUpload = () => {
+    alert("Upload image functionality goes here.");
+    // You can implement image uploading here
+  };
+
   return (
     <div className="blog-manager">
       <h2>Manage Blogs</h2>
       <div className="blog-form">
         <input
+          id="blogTitle"
           type="text"
           placeholder="Blog Title"
           value={blogTitle}
           onChange={(e) => setBlogTitle(e.target.value)}
         />
         <textarea
+          id="blogContent"
           placeholder="Blog Content"
           value={blogContent}
           onChange={(e) => setBlogContent(e.target.value)}
         ></textarea>
+        <div className="toolbar">
+          <FaUpload className="icon" onClick={handleImageUpload} title="Upload Image" />
+          <FaBold className="icon" onClick={() => handleTextFormat("bold")} title="Bold" />
+          <FaItalic className="icon" onClick={() => handleTextFormat("italic")} title="Italic" />
+          <FaAlignLeft className="icon" onClick={() => handleTextFormat("alignLeft")} title="Align Left" />
+          <FaAlignCenter className="icon" onClick={() => handleTextFormat("alignCenter")} title="Align Center" />
+          <FaAlignRight className="icon" onClick={() => handleTextFormat("alignRight")} title="Align Right" />
+        </div>
         <button className="btn" onClick={handleSubmit}>
           Add Blog
         </button>
