@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import "../Styles/BlogManager.css";
 
 // Importing Font Awesome icons
-import { FaUpload, FaBold, FaItalic, FaAlignLeft, FaAlignCenter, FaAlignRight } from "react-icons/fa";
+import {
+  FaUpload,
+  FaBold,
+  FaItalic,
+  FaAlignLeft,
+  FaAlignCenter,
+  FaAlignRight,
+} from "react-icons/fa";
 
 function BlogManager() {
   const [blogTitle, setBlogTitle] = useState("");
@@ -35,7 +42,10 @@ function BlogManager() {
     const activeElement = document.activeElement;
     const selectionStart = activeElement.selectionStart;
     const selectionEnd = activeElement.selectionEnd;
-    const selectedText = activeElement.value.substring(selectionStart, selectionEnd);
+    const selectedText = activeElement.value.substring(
+      selectionStart,
+      selectionEnd
+    );
 
     if (selectedText) {
       let formattedText;
@@ -59,7 +69,10 @@ function BlogManager() {
           return;
       }
 
-      const newText = activeElement.value.substring(0, selectionStart) + formattedText + activeElement.value.substring(selectionEnd);
+      const newText =
+        activeElement.value.substring(0, selectionStart) +
+        formattedText +
+        activeElement.value.substring(selectionEnd);
       if (activeElement === document.getElementById("blogTitle")) {
         setBlogTitle(newText);
       } else if (activeElement === document.getElementById("blogContent")) {
@@ -90,14 +103,6 @@ function BlogManager() {
           value={blogContent}
           onChange={(e) => setBlogContent(e.target.value)}
         ></textarea>
-        <div className="toolbar">
-          <FaUpload className="icon" onClick={handleImageUpload} title="Upload Image" />
-          <FaBold className="icon" onClick={() => handleTextFormat("bold")} title="Bold" />
-          <FaItalic className="icon" onClick={() => handleTextFormat("italic")} title="Italic" />
-          <FaAlignLeft className="icon" onClick={() => handleTextFormat("alignLeft")} title="Align Left" />
-          <FaAlignCenter className="icon" onClick={() => handleTextFormat("alignCenter")} title="Align Center" />
-          <FaAlignRight className="icon" onClick={() => handleTextFormat("alignRight")} title="Align Right" />
-        </div>
         <button className="btn" onClick={handleSubmit}>
           Add Blog
         </button>

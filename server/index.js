@@ -33,7 +33,7 @@ app.post('/login', (req, res) => {
     })
     .catch(err => res.json(err));
 });
-app.listen(5003, () => {
+app.listen(5001, () => {
     console.log("server is running on port 5000");
   });
   

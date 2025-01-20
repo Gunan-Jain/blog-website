@@ -9,7 +9,7 @@ app.use(express.json());
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGO_URI || "mongodb+srv://techno:techno12@blogstorage.lh2j9.mongodb.net/")
+  .connect("mongodb+srv://techno:techno12@blogstorage.lh2j9.mongodb.net/")
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.error('Connection error:', err));
 
@@ -42,6 +42,6 @@ app.get('/api/paragraphs', async (req, res) => {
   }
 });
 
-app.listen(3008 , () => {
+app.listen(3009 , () => {
   console.log("Server is running on port 3001");
 });

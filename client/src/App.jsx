@@ -18,7 +18,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/Dashboard" element={<Dashboard />} />
-          <Route path="/blog" element={<Blog />} /> {/* Correct capitalization */}
+          <Route path="/blog" element={<Blog />} />{" "}
+          {/* Correct capitalization */}
         </Routes>
       </Router>
     </>

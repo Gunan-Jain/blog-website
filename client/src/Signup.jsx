@@ -22,7 +22,7 @@ const Signup = () => {
     e.preventDefault();
 
     axios
-      .post("http://localhost:5003/register", formData)
+      .post("http://localhost:5001/register", formData)
       .then((result) => {
         console.log(result);
         navigate("/login");
@@ -41,9 +41,7 @@ const Signup = () => {
           loop
           muted
         />
-        <div className="video-tagline">
-        Your Eyes When You’re Away
-        </div>
+        <div className="video-tagline">Your Eyes When You’re Away</div>
       </div>
       <div className="signup-form">
         <form className="signup-form-content" onSubmit={handleSubmit}>
