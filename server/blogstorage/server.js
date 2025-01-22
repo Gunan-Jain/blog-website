@@ -9,7 +9,7 @@ app.use(express.json());
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb+srv://techno:techno12@blogstorage.lh2j9.mongodb.net/")
+  .connect("mongodb+srv://gj809:gj809@employee.9cihn.mongodb.net/")
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.error('Connection error:', err));
 
@@ -20,7 +20,7 @@ const paragraphSchema = new mongoose.Schema({
 
 const Paragraph = mongoose.model('Paragraph', paragraphSchema);
 
-app.post('/api/paragraph', async (req, res) => {
+app.post('/blogs', async (req, res) => {
   const { content } = req.body;
   const newParagraph = new Paragraph({ content });
   try {
@@ -33,7 +33,7 @@ app.post('/api/paragraph', async (req, res) => {
 
 
 // API Route to fetch all paragraphs
-app.get('/api/paragraphs', async (req, res) => {
+app.get('/blogs', async (req, res) => {
   try {
     const paragraphs = await Paragraph.find();
     res.status(200).json(paragraphs);
@@ -42,6 +42,6 @@ app.get('/api/paragraphs', async (req, res) => {
   }
 });
 
-app.listen(3009 , () => {
-  console.log("Server is running on port 3001");
+app.listen(3008 , () => {
+  console.log("Server is running on port 3008");
 });
