@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose'); // Ensure mongoose is imported
@@ -42,6 +43,6 @@ app.get('/api/paragraphs', async (req, res) => {
   }
 });
 
-app.listen(3008 , () => {
+app.listen(4000, () => {
   console.log("Server is running on port 3001");
 });
