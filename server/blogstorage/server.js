@@ -21,7 +21,7 @@ const paragraphSchema = new mongoose.Schema({
 
 const Paragraph = mongoose.model('Paragraph', paragraphSchema);
 
-app.post('/blogs', async (req, res) => {
+app.post('/paragraphs', async (req, res) => {
   const { content } = req.body;
   const newParagraph = new Paragraph({ content });
   try {
@@ -34,7 +34,7 @@ app.post('/blogs', async (req, res) => {
 
 
 // API Route to fetch all paragraphs
-app.get('/blogs', async (req, res) => {
+app.get('/paragraphs', async (req, res) => {
   try {
     const paragraphs = await Paragraph.find();
     res.status(200).json(paragraphs);
@@ -43,11 +43,9 @@ app.get('/blogs', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-app.listen(4000, () => {
-  console.log("Server is running on port 3001");
-=======
+
+
 app.listen(3008 , () => {
   console.log("Server is running on port 3008");
->>>>>>> 6f906cff4896b40908c2ce91a45f297262f44ff9
+
 });

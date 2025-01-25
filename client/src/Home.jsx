@@ -3,11 +3,11 @@ import "./Home.css";
 import EnLogo from "./assets/EnLogo.jpg";
 import Video from "./assets/video.mp4";
 import { Link } from "react-router-dom";
-import { FaPlusCircle } from "react-icons/fa"; 
-import axios from "axios"; 
+import { FaPlusCircle } from "react-icons/fa";
+import axios from "axios";
 
 const Home = () => {
-  const [blogs, setBlogs] = useState([]); 
+  const [blogs, setBlogs] = useState([]);
   const [newBlog, setNewBlog] = useState({
     title: "",
     content: "",
@@ -47,7 +47,7 @@ const Home = () => {
         const newBlogContent = `${newBlog.title}: ${newBlog.content}`;
 
         // Post the new blog to the backend
-        await axios.post("http://localhost:3008/api/blog", {
+        await axios.post("http://localhost:3008/paragraphs", {
           content: newBlogContent, // Sending title and content as combined string
         });
 
