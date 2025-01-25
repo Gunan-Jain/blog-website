@@ -14,10 +14,12 @@ const Home = () => {
   });
   const [showForm, setShowForm] = useState(false); // Toggles the form
 
-  // Fetch blogs from the backend
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get("http://localhost:3008/paragraphs");
+      const response = await axios.get("http://localhost:4003/paragraphs", {
+        params: { status: "approved" },
+      });
+      
       const formattedBlogs = response.data.map((item) => {
         const [title, content] = item.content.split(": ");
         return { title: title || "Untitled", content: content || "" };
@@ -27,7 +29,6 @@ const Home = () => {
       console.error("Error fetching blogs:", error);
     }
   };
-
   // Fetch blogs on component mount
   useEffect(() => {
     fetchBlogs();
@@ -47,7 +48,7 @@ const Home = () => {
         const newBlogContent = `${newBlog.title}: ${newBlog.content}`;
 
         // Post the new blog to the backend
-        await axios.post("http://localhost:3008/api/blog", {
+        await axios.post("http://localhost:4003/paragraphs", {
           content: newBlogContent, // Sending title and content as combined string
         });
 
@@ -157,54 +158,52 @@ const Home = () => {
         </section>
 
         <section className="blog" id="blog">
-          <h3>Latest Blog Posts</h3>
-          <div className="blog-posts">
-            {blogs.map((blog, index) => (
-              <div className="blog-post" key={index}>
-                <h4>{blog.title}</h4>
-                <div
-                  className="blog-content"
-                  style={{ maxHeight: "300px", overflowY: "scroll" }}
-                >
-                  <p>{blog.content}</p>
-                </div>
-              </div>
-            ))}
+  <h3>Latest Blog Posts</h3>
+  <div className="blog-posts">
+    {blogs.map((blog, index) => (
+      <div className="blog-post" key={index}>
+        <h4>{blog.title}</h4>
+        <div className="blog-content">
+          <p>{blog.content}</p>
+        </div>
+      </div>
+    ))}
 
-            {/* Add Blog Icon */}
-            <div
-              className="blog-post add-blog"
-              onClick={() => setShowForm(!showForm)}
-            >
-              <FaPlusCircle size={50} color="#007BFF" />
-              <p>Add New Blog</p>
-            </div>
+    {/* Add Blog Icon */}
+    <div
+      className="blog-post add-blog"
+      onClick={() => setShowForm(!showForm)}
+    >
+      <FaPlusCircle size={50} color="#fff" />
+      <p>Add New Blog</p>
+    </div>
 
-            {/* Blog Form */}
-            {showForm && (
-              <div className="blog-post">
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Enter Blog Title"
-                  value={newBlog.title}
-                  onChange={handleBlogChange}
-                  className="blog-input"
-                />
-                <textarea
-                  name="content"
-                  placeholder="Enter Blog Content"
-                  value={newBlog.content}
-                  onChange={handleBlogChange}
-                  className="blog-textarea"
-                />
-                <button onClick={handleAddBlog} className="submit-button">
-                  Post Blog
-                </button>
-              </div>
-            )}
-          </div>
-        </section>
+    {/* Blog Form */}
+    {showForm && (
+      <div className="blog-post">
+        <input
+          type="text"
+          name="title"
+          placeholder="Enter Blog Title"
+          value={newBlog.title}
+          onChange={handleBlogChange}
+          className="blog-input"
+        />
+        <textarea
+          name="content"
+          placeholder="Enter Blog Content"
+          value={newBlog.content}
+          onChange={handleBlogChange}
+          className="blog-textarea"
+        />
+        <button onClick={handleAddBlog} className="submit-button">
+          Post Blog
+        </button>
+      </div>
+    )}
+  </div>
+</section>
+
 
         <section className="contact" id="contact">
           <h3>Contact Us</h3>
