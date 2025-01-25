@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+<<<<<<< HEAD
 const API_URL = "http://localhost:4000/comments";
+=======
+const API_URL = "http://localhost:5001/comments";
+>>>>>>> d566954dd5ccf86088b42761664215b29a6a787c
 
 const CommentSection = () => {
   const [comments, setComments] = useState([]);

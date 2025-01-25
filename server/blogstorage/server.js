@@ -1,7 +1,6 @@
-
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose'); // Ensure mongoose is imported
+const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
@@ -10,17 +9,19 @@ app.use(express.json());
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb+srv://gj809:gj809@employee.9cihn.mongodb.net/")
+  .connect("mongodb+srv://techno:techno12@blogstorage.lh2j9.mongodb.net/")
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.error('Connection error:', err));
 
 // Schema and Model
 const paragraphSchema = new mongoose.Schema({
   content: { type: String, required: true },
+  status: { type: String, default: "pending", enum: ["pending", "approved"] },
 });
 
-const Paragraph = mongoose.model('Paragraph', paragraphSchema);
+const Paragraph = mongoose.model('Paragraphs', paragraphSchema);
 
+// Route to add a new paragraph
 app.post('/paragraphs', async (req, res) => {
   const { content } = req.body;
   const newParagraph = new Paragraph({ content });
@@ -32,20 +33,36 @@ app.post('/paragraphs', async (req, res) => {
   }
 });
 
-
-// API Route to fetch all paragraphs
 app.get('/paragraphs', async (req, res) => {
+  const { status } = req.query; // Check query for filtering
   try {
-    const paragraphs = await Paragraph.find();
+    const filter = status ? { status } : {}; // Filter by status if provided
+    const paragraphs = await Paragraph.find(filter);
     res.status(200).json(paragraphs);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching paragraphs' });
   }
 });
 
+// Route to approve a paragraph by ID
+app.put('/paragraphs/:id/approve', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedParagraph = await Paragraph.findByIdAndUpdate(
+      id,
+      { status: "approved" },
+      { new: true }
+    );
+    if (!updatedParagraph) {
+      return res.status(404).json({ message: "Paragraph not found" });
+    }
+    res.status(200).json(updatedParagraph);
+  } catch (err) {
+    res.status(500).json({ message: "Error approving paragraph" });
+  }
+});
 
-
-app.listen(3008 , () => {
-  console.log("Server is running on port 3008");
-
+// Start the server
+app.listen(4003, () => {
+  console.log("Server is running on port 4002");
 });

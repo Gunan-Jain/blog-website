@@ -4,7 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const app = express();
-const PORT = 4000;
+const PORT = 5001;
 
 // Middleware
 app.use(cors());
@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb+srv://gj809:gj809@employee.9cihn.mongodb.net/")
+  .connect("mongodb+srv://techno:techno12@blogstorage.lh2j9.mongodb.net/")
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 
