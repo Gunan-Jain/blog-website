@@ -1,139 +1,172 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:5001/comments";
-
-const CommentSection = () => {
+const CommentSection = ({ blogId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [replies, setReplies] = useState({}); // Object to store reply text for each comment
 
-  // Fetch all comments
-  const fetchComments = async () => {
-    try {
-      const response = await axios.get(API_URL);
-      setComments(response.data);
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    }
+  // Fetch all comments for a specific blog
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/comments/${blogId}`
+        );
+        setComments(response.data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
+  }, [blogId]);
+
+  // Handle new comment input
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
   };
 
   // Add a new comment
-  const addComment = async () => {
+  const handleAddComment = async () => {
     if (newComment.trim()) {
       try {
-        const response = await axios.post(API_URL, { text: newComment });
-        setComments([...comments, response.data]);
+        await axios.post("http://localhost:5001/comments", {
+          blogId,
+          text: newComment,
+        });
         setNewComment("");
+        // Refetch comments after adding
+        const response = await axios.get(
+          `http://localhost:5001/comments/${blogId}`
+        );
+        setComments(response.data);
       } catch (error) {
         console.error("Error adding comment:", error);
       }
     }
   };
 
-  useEffect(() => {
-    fetchComments();
-  }, []);
+  // Handle reply text change for a specific comment
+  const handleReplyChange = (commentId, e) => {
+    setReplies({
+      ...replies,
+      [commentId]: e.target.value, // Update the reply text for the specific comment
+    });
+  };
 
-  return (
-    <div>
-      <h2>Comment Section</h2>
-      <div>
-        <input
-          type="text"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Write a comment..."
-        />
-        <button onClick={addComment}>Add Comment</button>
-      </div>
-      <ul>
-        {comments.map((comment) => (
-          <CommentItem
-            key={comment._id}
-            comment={comment}
-            setComments={setComments}
-            comments={comments}
-          />
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const CommentItem = ({ comment, setComments, comments }) => {
-  const [showReplies, setShowReplies] = useState(false);
-  const [replyText, setReplyText] = useState("");
-
-  const addReply = async () => {
+  const handleAddReply = async (commentId) => {
+    const replyText = replies[commentId]; // Get the reply text for the specific comment
     if (replyText.trim()) {
       try {
-        const response = await axios.post(`${API_URL}/${comment._id}/replies`, {
-          text: replyText,
-        });
-        setComments(
-          comments.map((c) => (c._id === comment._id ? response.data : c))
+        const response = await axios.post(
+          `http://localhost:5001/comments/${commentId}/replies`,
+          { text: replyText }
         );
-        setReplyText("");
+        setComments(
+          comments.map((c) => (c._id === commentId ? response.data : c))
+        );
+        setReplies({ ...replies, [commentId]: "" }); // Clear the reply input for that comment
       } catch (error) {
         console.error("Error adding reply:", error);
       }
     }
   };
 
-  const deleteReply = async (replyId) => {
+  // Toggle replies visibility for a specific comment
+  const handleShowReplies = (commentId) => {
+    setComments(
+      comments.map((comment) =>
+        comment._id === commentId
+          ? { ...comment, showReplies: !comment.showReplies }
+          : comment
+      )
+    );
+  };
+
+  // Delete a comment
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axios.delete(`http://localhost:5001/comments/${commentId}`);
+      setComments(comments.filter((c) => c._id !== commentId));
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  // Delete a reply
+  const handleDeleteReply = async (commentId, replyId) => {
     try {
       const response = await axios.delete(
-        `${API_URL}/${comment._id}/replies/${replyId}`
+        `http://localhost:5001/comments/${commentId}/replies/${replyId}`
       );
       setComments(
-        comments.map((c) => (c._id === comment._id ? response.data : c))
+        comments.map((c) =>
+          c._id === commentId
+            ? {
+                ...c,
+                replies: c.replies.filter((r) => r._id !== replyId), // Keep other replies, exclude the deleted one
+              }
+            : c
+        )
       );
     } catch (error) {
       console.error("Error deleting reply:", error);
     }
   };
 
-  const deleteComment = async () => {
-    try {
-      await axios.delete(`${API_URL}/${comment._id}`);
-      setComments(comments.filter((c) => c._id !== comment._id));
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-    }
-  };
-
   return (
-    <li>
-      <p>{comment.text}</p>
-      <button onClick={() => setShowReplies(!showReplies)}>
-        {showReplies ? "Hide Replies" : "Show Replies"}
-      </button>
-      <button
-        onClick={deleteComment}
-        style={{ marginLeft: "10px", color: "red" }}
-      >
-        Delete Comment
-      </button>
+    <div className="comment-section">
+      <h3>Comments</h3>
       <div>
-        <input
-          type="text"
-          value={replyText}
-          onChange={(e) => setReplyText(e.target.value)}
-          placeholder="Write a reply..."
+        <textarea
+          value={newComment}
+          onChange={handleCommentChange}
+          placeholder="Add a comment"
+          className="comment-input"
         />
-        <button onClick={addReply}>Reply</button>
+        <button onClick={handleAddComment}>Post Comment</button>
       </div>
-      {showReplies && (
-        <ul>
-          {comment.replies.map((reply) => (
-            <li key={reply._id}>
-              {reply.text}
-              <button onClick={() => deleteReply(reply._id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </li>
+      {comments.map((comment) => (
+        <div key={comment._id} className="comment">
+          <p>{comment.text}</p>
+          <button onClick={() => handleShowReplies(comment._id)}>
+            {comment.showReplies ? "Hide Replies" : "Show Replies"}
+          </button>
+          <button
+            onClick={() => handleDeleteComment(comment._id)}
+            style={{ color: "red" }}
+          >
+            Delete Comment
+          </button>
+          <div>
+            <input
+              type="text"
+              value={replies[comment._id] || ""} // Use the reply text for this specific comment
+              onChange={(e) => handleReplyChange(comment._id, e)}
+              placeholder="Write a reply..."
+            />
+            <button onClick={() => handleAddReply(comment._id)}>Reply</button>
+          </div>
+          {comment.showReplies &&
+            comment.replies &&
+            comment.replies.length > 0 && (
+              <ul>
+                {comment.replies.map((reply) => (
+                  <li key={reply._id}>
+                    {reply.text}
+                    <button
+                      onClick={() => handleDeleteReply(comment._id, reply._id)}
+                    >
+                      Delete Reply
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+        </div>
+      ))}
+    </div>
   );
 };
 

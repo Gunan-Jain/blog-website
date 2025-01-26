@@ -16,7 +16,7 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 
-// Comment Schema
+// Comment Schema with Replies
 const replySchema = new mongoose.Schema({
   text: String,
   date: { type: Date, default: Date.now },
@@ -24,6 +24,7 @@ const replySchema = new mongoose.Schema({
 
 const commentSchema = new mongoose.Schema({
   text: String,
+  blogId: { type: mongoose.Schema.Types.ObjectId, ref: "Blog" },
   replies: [replySchema],
   date: { type: Date, default: Date.now },
 });
@@ -31,21 +32,22 @@ const commentSchema = new mongoose.Schema({
 const Comment = mongoose.model("Comment", commentSchema);
 
 // Routes
-// Fetch all comments
-app.get("/comments", async (req, res) => {
+// Fetch comments for a specific blog
+app.get("/comments/:blogId", async (req, res) => {
+  const { blogId } = req.params;
   try {
-    const comments = await Comment.find();
+    const comments = await Comment.find({ blogId });
     res.json(comments);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// Add a new comment
+// Post a new comment for a specific blog
 app.post("/comments", async (req, res) => {
-  const { text } = req.body;
+  const { text, blogId } = req.body;
   try {
-    const comment = new Comment({ text });
+    const comment = new Comment({ text, blogId });
     await comment.save();
     res.status(201).json(comment);
   } catch (err) {

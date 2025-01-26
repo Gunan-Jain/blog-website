@@ -5,14 +5,31 @@ import Video from "./assets/video.mp4";
 import { Link } from "react-router-dom";
 import { FaPlusCircle } from "react-icons/fa";
 import axios from "axios";
+import Comment from "./comment"; // Import the Comment component
+
+// Modal Component
+const Modal = ({ isOpen, closeModal, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <button onClick={closeModal} className="close-modal">
+          &times;
+        </button>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
-  const [newBlog, setNewBlog] = useState({
-    title: "",
-    content: "",
-  });
+  const [newBlog, setNewBlog] = useState({ title: "", content: "" });
   const [showForm, setShowForm] = useState(false); // Toggles the form
+  const [selectedBlog, setSelectedBlog] = useState(null); // To store selected blog for modal
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [isCommentSectionOpen, setIsCommentSectionOpen] = useState(false); // State to toggle comment section visibility
 
   const fetchBlogs = async () => {
     try {
@@ -22,13 +39,18 @@ const Home = () => {
 
       const formattedBlogs = response.data.map((item) => {
         const [title, content] = item.content.split(": ");
-        return { title: title || "Untitled", content: content || "" };
+        return {
+          title: title || "Untitled",
+          content: content || "",
+          _id: item._id,
+        };
       });
       setBlogs(formattedBlogs);
     } catch (error) {
       console.error("Error fetching blogs:", error);
     }
   };
+
   // Fetch blogs on component mount
   useEffect(() => {
     fetchBlogs();
@@ -36,26 +58,17 @@ const Home = () => {
 
   const handleBlogChange = (e) => {
     const { name, value } = e.target;
-    setNewBlog((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setNewBlog((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleAddBlog = async () => {
     if (newBlog.title.trim() && newBlog.content.trim()) {
       try {
         const newBlogContent = `${newBlog.title}: ${newBlog.content}`;
-
-        // Post the new blog to the backend
         await axios.post("http://localhost:4003/paragraphs", {
-          content: newBlogContent, // Sending title and content as combined string
+          content: newBlogContent,
         });
-
-        // Fetch blogs again to reflect the new addition
         fetchBlogs();
-
-        // Reset the new blog form and close it
         setNewBlog({ title: "", content: "" });
         setShowForm(false);
       } catch (error) {
@@ -64,6 +77,23 @@ const Home = () => {
     } else {
       alert("Please fill in both title and content.");
     }
+  };
+
+  const openModal = (blog) => {
+    setSelectedBlog(blog);
+    setIsModalOpen(true);
+    setIsCommentSectionOpen(false); // Ensure comments section is closed initially when modal opens
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedBlog(null);
+    setIsCommentSectionOpen(false); // Ensure comments section is closed when modal is closed
+  };
+
+  // Toggle the comment section visibility
+  const toggleCommentSection = () => {
+    setIsCommentSectionOpen((prevState) => !prevState);
   };
 
   return (
@@ -129,7 +159,7 @@ const Home = () => {
           <a href="#contact">Contact Us</a>
         </nav>
       </div>
-
+      {/* Main Content */}
       <div className="main-content">
         <section className="video-section">
           <video autoPlay muted loop>
@@ -139,24 +169,7 @@ const Home = () => {
           <div className="overlay">Welcome to Endroid USA</div>
         </section>
 
-        <section className="features" id="features">
-          <h3>Features</h3>
-          <div className="features-grid">
-            <div className="feature">
-              <h4>Advanced Technology</h4>
-              <p>State-of-the-art surveillance systems for your safety.</p>
-            </div>
-            <div className="feature">
-              <h4>High Reliability</h4>
-              <p>Products designed for durability and consistency.</p>
-            </div>
-            <div className="feature">
-              <h4>Easy Installation</h4>
-              <p>Hassle-free setup for immediate use.</p>
-            </div>
-          </div>
-        </section>
-
+        {/* Blog Section */}
         <section className="blog" id="blog">
           <h3>Latest Blog Posts</h3>
           <div className="blog-posts">
@@ -166,6 +179,9 @@ const Home = () => {
                 <div className="blog-content">
                   <p>{blog.content}</p>
                 </div>
+                <button onClick={() => openModal(blog)}>
+                  Read More and Comment
+                </button>
               </div>
             ))}
 
@@ -204,6 +220,22 @@ const Home = () => {
           </div>
         </section>
 
+        {/* Modal for Viewing Full Blog and Adding Comments */}
+        <Modal isOpen={isModalOpen} closeModal={closeModal}>
+          {selectedBlog && (
+            <>
+              <h2>{selectedBlog.title}</h2>
+              <p>{selectedBlog.content}</p>
+              {/* Toggle button for comments section */}
+              <button onClick={toggleCommentSection}>
+                {isCommentSectionOpen ? "Hide Comments" : "Show Comments"}
+              </button>
+              {/* Render Comment Section when it's open */}
+              {isCommentSectionOpen && <Comment blogId={selectedBlog._id} />}
+            </>
+          )}
+        </Modal>
+
         <section className="contact" id="contact">
           <h3>Contact Us</h3>
           <div className="contact-info">
@@ -220,17 +252,18 @@ const Home = () => {
           </div>
         </section>
 
+        {/* About Us Section */}
         <section className="about" id="about">
           <h3>About Us</h3>
           <p>
             Endroid USA is dedicated to providing cutting-edge security
             solutions to homes and businesses. Our products are designed with
             reliability, efficiency, and ease of use in mind, ensuring that your
-            safety is never compromised. With a commitment to excellence, we
-            strive to deliver the best in surveillance and security technology.
+            safety is never compromised.
           </p>
         </section>
 
+        {/* Footer Section */}
         <footer>
           <p>&copy; 2025 Endroid USA. All rights reserved.</p>
         </footer>
