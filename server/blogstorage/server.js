@@ -63,6 +63,6 @@ app.put('/paragraphs/:id/approve', async (req, res) => {
 });
 
 // Start the server
-app.listen(4003, () => {
+app.listen(4009, () => {
   console.log("Server is running on port 4003");
 });

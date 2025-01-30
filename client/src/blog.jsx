@@ -9,7 +9,7 @@ const Blog = () => {
   // Fetch pending paragraphs
   const fetchPendingParagraphs = async () => {
     try {
-      const response = await axios.get("http://localhost:4003/paragraphs", {
+      const response = await axios.get("http://localhost:4009/paragraphs", {
         params: { status: "pending" },
       });
       setPendingParagraphs(response.data);
@@ -22,7 +22,7 @@ const Blog = () => {
   const approveParagraph = async (id) => {
     try {
       // Send the correct PUT request with the paragraph ID
-      await axios.put(`http://localhost:4003/paragraphs/${id}/approve`);
+      await axios.put(`http://localhost:4009/paragraphs/${id}/approve`);
 
       // Refresh pending paragraphs after approval
       fetchPendingParagraphs();

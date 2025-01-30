@@ -1,51 +1,48 @@
 import React, { useState, useEffect } from "react";
 import "../styles/AdminPage.css";
-import "./Dashboard.css";
 import Widget from "../Components/widget";
-import BlogManager from "../Components/BlogManager";
 import VideoManager from "../Components/VideoManager";
 import ThemeToggle from "../Components/Theme";
 import { useNavigate } from "react-router-dom";
-import ImageManager from "../Components/ImageManager";
 import axios from "axios";
+import BlogManager from "../Components/BlogManager";
 
 function Dashboard() {
-  const [approvedParagraphs, setApprovedParagraphs] = useState([]);
-  const [totalParagraphs, setTotalParagraphs] = useState(0);
+  const [newBlog, setNewBlog] = useState({ title: "", content: "", image: null });
   const navigate = useNavigate();
 
-  // Fetch approved paragraphs
-  const fetchApprovedParagraphs = async () => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewBlog({ ...newBlog, [name]: value });
+  };
+
+  const handleFileChange = (e) => {
+    setNewBlog({ ...newBlog, image: e.target.files[0] });
+  };
+
+  const handleAddBlog = async () => {
+    if (!newBlog.title || !newBlog.content || !newBlog.image) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
     try {
-      const response = await axios.get("http://localhost:4003/paragraphs", {
-        params: { status: "approved" },
+      const formData = new FormData();
+      formData.append("title", newBlog.title);
+      formData.append("content", newBlog.content);
+      formData.append("image", newBlog.image);
+
+      const response = await axios.post("http://localhost:5000/blogs", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      setApprovedParagraphs(response.data);
-    } catch (error) {
-      console.error("Error fetching approved paragraphs:", error);
+
+      alert("Blog added successfully!");
+      navigate("/", { state: { newBlog: response.data } });
+
+      setNewBlog({ title: "", content: "", image: null });
+    } catch (err) {
+      console.error("Error adding blog:", err.response?.data || err.message);
     }
-  };
-
-  // Fetch total paragraphs
-  const fetchTotalParagraphs = async () => {
-    try {
-      const response = await axios.get("http://localhost:4003/paragraphs");
-      setTotalParagraphs(response.data.length);
-    } catch (error) {
-      console.error("Error fetching total paragraphs:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchApprovedParagraphs();
-    fetchTotalParagraphs();
-  }, []);
-
-  const progress = totalParagraphs > 0 ? (approvedParagraphs.length / totalParagraphs) * 100 : 0;
-
-  const handleNavigateToBlog = () => {
-    console.log("Navigating to Blog Page");
-    navigate("/blog");
   };
 
   return (
@@ -56,53 +53,34 @@ function Dashboard() {
       </header>
       <main className="admin-content">
         <section className="stats">
-          <div
-            onClick={handleNavigateToBlog}
-            style={{ cursor: "pointer", maxWidth: "50vw", position: "relative" }}
-          >
-            {/* "Blogs" widget */}
-            <Widget title="Blogs" />
-            
-            {/* Circular progress bar displayed over the "Blogs" widget */}
-            <div className="progress-bar-overlay">
-              <div className="circle-progress-bar">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r="35"
-                    stroke="#444"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r="35"
-                    stroke="#4caf50" // Green color for progress
-                    strokeWidth="4"
-                    fill="none"
-                    strokeDasharray={`${progress}, 100`}
-                    transform="rotate(-90 40 40)"
-                  />
-                </svg>
-                <div className="progress-text">{`${Math.round(progress)}%`}</div>
-              </div>
-              <p>{`${approvedParagraphs.length} of ${totalParagraphs} blogs approved`}</p>
+          <Widget title="Blogs" />
+          <Widget title="Videos" />
+        </section>
+
+        <section className="blog-manager">
+          <h1>Add New Blog</h1>
+          <div className="blog-form">
+            <input
+              type="text"
+              placeholder="Enter Blog Title"
+              name="title"
+              value={newBlog.title}
+              onChange={handleInputChange}
+            />
+            <textarea
+              placeholder="Enter Blog Content"
+              name="content"
+              value={newBlog.content}
+              onChange={handleInputChange}
+            />
+            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <div className="toolbar">
+              <button className="btn" onClick={handleAddBlog}>Post Blog</button>
             </div>
           </div>
-
-          <Widget
-            title="Videos"
-            className="VideoButton"
-          />
         </section>
-        <section className="management">
-          <ImageManager />
 
-          <BlogManager />
-          <VideoManager />
-        </section>
+        <VideoManager />
       </main>
     </div>
   );

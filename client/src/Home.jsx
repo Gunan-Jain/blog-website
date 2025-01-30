@@ -31,9 +31,10 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
   const [isCommentSectionOpen, setIsCommentSectionOpen] = useState(false); // State to toggle comment section visibility
 
+  // Fetch Blogs with Images
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get("http://localhost:4003/paragraphs", {
+      const response = await axios.get("http://localhost:4009/paragraphs", {
         params: { status: "approved" },
       });
 
@@ -43,6 +44,7 @@ const Home = () => {
           title: title || "Untitled",
           content: content || "",
           _id: item._id,
+          imageUrl: item.imageUrl || "", // Assuming there's an imageUrl in the response
         };
       });
       setBlogs(formattedBlogs);
@@ -51,7 +53,6 @@ const Home = () => {
     }
   };
 
-  // Fetch blogs on component mount
   useEffect(() => {
     fetchBlogs();
   }, []);
@@ -65,7 +66,7 @@ const Home = () => {
     if (newBlog.title.trim() && newBlog.content.trim()) {
       try {
         const newBlogContent = `${newBlog.title}: ${newBlog.content}`;
-        await axios.post("http://localhost:4003/paragraphs", {
+        await axios.post("http://localhost:4009/paragraphs", {
           content: newBlogContent,
         });
         fetchBlogs();
@@ -159,6 +160,7 @@ const Home = () => {
           <a href="#contact">Contact Us</a>
         </nav>
       </div>
+
       {/* Main Content */}
       <div className="main-content">
         <section className="video-section">
@@ -175,6 +177,9 @@ const Home = () => {
           <div className="blog-posts">
             {blogs.map((blog, index) => (
               <div className="blog-post" key={index}>
+                {blog.imageUrl && (
+                  <img src={blog.imageUrl} alt={blog.title} className="blog-image" />
+                )}
                 <h4>{blog.title}</h4>
                 <div className="blog-content">
                   <p>{blog.content}</p>
